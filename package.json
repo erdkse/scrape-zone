@@ -11,7 +11,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "mongoose": "^5.9.14",
-    "puppeteer": "^3.0.4"
+    "puppeteer": "1.19.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"

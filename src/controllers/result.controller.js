@@ -13,19 +13,19 @@ ResultController.checkResult = async (req, res) => {
   }
 
   try {
-    const result = await ResultModel.findOne({ keywords: keywords });
+    const result = await ResultModel.findOne({ keywords });
 
     if (result) {
-      if (
-        new Date(result.proceedOn).getTime() + DATE_EXPIRING_TIME >
-        Date.now()
-      ) {
+      const expiringTime =
+        new Date(result.proceedOn).getTime() + DATE_EXPIRING_TIME;
+
+      if (expiringTime > Date.now()) {
         return res.status(200).json(result);
       } else {
         const results = await searchGoogle(keywords);
         const updatedResult = await ResultModel.findOneAndUpdate(
           {
-            keywords: keywords,
+            keywords: keywords
           },
           { $set: { results: results, proceedOn: Date.now() } }
         );
@@ -36,14 +36,13 @@ ResultController.checkResult = async (req, res) => {
 
     const results = await searchGoogle(keywords);
     const createdResult = await ResultModel.create({
-      keywords: keywords,
-      results: results,
+      keywords,
+      results
     });
 
     return res.status(200).json(createdResult);
   } catch (error) {
-    console.log('ERROR', error);
-    res.status(500).json({ message: 'Error occured!' });
+    res.status(500).json({ message: error.message });
   }
 };
 

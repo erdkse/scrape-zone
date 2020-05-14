@@ -28,8 +28,15 @@ const scrapeResults = async (page) => {
 
 const searchGoogle = async (keywords) => {
   const browser = await puppeteer.launch({
-    args: ['--no-sandbox'],
-    headless: true,
+    executablePath: process.env.CHROMIUM_PATH,
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--headless',
+      '--disable-gpu',
+      '--disable-dev-shm-usage'
+    ],
+    headless: true
   });
 
   const page = await browser.newPage();
@@ -53,7 +60,9 @@ const searchGoogle = async (keywords) => {
 
   await browser.close();
 
-  return searchResults.slice(0, MAX_RESULT_LENGTH).map((item, index) => ({ index, ...item }));
+  return searchResults
+    .slice(0, MAX_RESULT_LENGTH)
+    .map((item, index) => ({ index, ...item }));
 };
 
 module.exports = searchGoogle;
